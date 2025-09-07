@@ -7,10 +7,7 @@ This operator allows you to create, manage, and delete GitHub repositories throu
 
 ### Prerequisites
 
-1. **GitHub Personal Access Token**: Create a token with the following scopes:
-
-   - `repo` (for full control of private repositories)
-   - `public_repo` (for access to public repositories)
+1. **GitHub Personal Access Token**
 
 2. **Kubernetes Cluster**: A running Kubernetes cluster (local or remote)
 
