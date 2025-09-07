@@ -1,6 +1,7 @@
 # GitHub Kubernetes Operator
 
 A Kubernetes operator for managing GitHub repositories using the GitHub API.
+
 This operator allows you to create, manage, and delete GitHub repositories through Kubernetes Custom Resource Definitions (CRDs).
 
 ## Quick Start
@@ -18,10 +19,10 @@ This operator allows you to create, manage, and delete GitHub repositories throu
    ```bash
    git clone https://github.com/thatmlopsguy/github-k8s-operator
    cd github-k8s-operator
-   
+
    # Build the Docker image
    make docker-build
-   
+
    # For kind clusters, load the image
    kind load docker-image thatmlopsguy/github-operator:latest --name github-operator-test-e2e
    ```
@@ -40,7 +41,7 @@ This operator allows you to create, manage, and delete GitHub repositories throu
    ```bash
    # Install CRDs
    make install
-   
+
    # Deploy the operator
    make deploy
    ```

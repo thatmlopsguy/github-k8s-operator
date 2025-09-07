@@ -102,13 +102,13 @@ func (r *RepositoryReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	if existingRepo != nil {
 		// Repository exists, check if updates are needed
 		log.Info("Repository already exists on GitHub", "url", existingRepo.GetHTMLURL())
-		
+
 		updated, err := r.updateGitHubRepository(ctx, githubClient, &gitHubRepo, existingRepo)
 		if err != nil {
 			log.Error(err, "Failed to update repository")
 			return r.updateStatus(ctx, &gitHubRepo, false, "", fmt.Sprintf("Failed to update repository: %v", err), 0)
 		}
-		
+
 		if updated {
 			log.Info("Successfully updated GitHub repository", "url", existingRepo.GetHTMLURL())
 			return r.updateStatus(ctx, &gitHubRepo, true, existingRepo.GetHTMLURL(), "Repository updated successfully", existingRepo.GetID())
@@ -181,7 +181,7 @@ func (r *RepositoryReconciler) getGitHubRepository(ctx context.Context, client *
 // createGitHubRepository creates a new repository on GitHub
 func (r *RepositoryReconciler) createGitHubRepository(ctx context.Context, client *github.Client, gitHubRepo *githubv1alpha1.GitHubRepo) (*github.Repository, error) {
 	log := logf.FromContext(ctx)
-	
+
 	repo := &github.Repository{
 		Name:        github.String(gitHubRepo.Spec.Name),
 		Description: github.String(gitHubRepo.Spec.Description),
@@ -202,7 +202,7 @@ func (r *RepositoryReconciler) createGitHubRepository(ctx context.Context, clien
 
 	owner := gitHubRepo.Spec.Owner
 	log.Info("Creating repository with parameters", "name", gitHubRepo.Spec.Name, "private", gitHubRepo.Spec.Private, "gitignore", gitHubRepo.Spec.Gitignore, "license", gitHubRepo.Spec.License)
-	
+
 	createdRepo, _, err := client.Repositories.Create(ctx, owner, repo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create repository: %w", err)
@@ -263,7 +263,7 @@ func (r *RepositoryReconciler) updateGitHubRepository(ctx context.Context, clien
 
 	if desiredPrivate != currentPrivate {
 		log.Info("Repository visibility needs update", "current", currentPrivate, "desired", desiredPrivate)
-		
+
 		// Prepare update request
 		repoUpdate := &github.Repository{
 			Private: &desiredPrivate,
@@ -295,7 +295,7 @@ func (r *RepositoryReconciler) updateGitHubRepository(ctx context.Context, clien
 
 	if desiredDescription != currentDescription && desiredDescription != "" {
 		log.Info("Repository description needs update", "current", currentDescription, "desired", desiredDescription)
-		
+
 		// Prepare update request
 		repoUpdate := &github.Repository{
 			Description: &desiredDescription,

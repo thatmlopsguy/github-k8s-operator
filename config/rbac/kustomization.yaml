@@ -25,4 +25,3 @@ resources:
 - repository_admin_role.yaml
 - repository_editor_role.yaml
 - repository_viewer_role.yaml
-

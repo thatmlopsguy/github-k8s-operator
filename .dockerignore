@@ -2,5 +2,8 @@
 # Ignore build and test binaries.
 bin/
 .devcontainer/
-.githbub/
 examples/
+.vscode/
+.github/
+.git/
+.gitignore
