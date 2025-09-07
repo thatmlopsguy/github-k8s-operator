@@ -5,8 +5,6 @@
 To create this operator using Operator SDK (Go version):
 
 1. Install Operator SDK ([installation guide](https://sdk.operatorframework.io/docs/installation/))
-
-
 1. Initialize the project:
 
 ```sh

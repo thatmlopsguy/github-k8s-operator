@@ -40,13 +40,13 @@ var _ = Describe("Repository Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		repository := &githubv1alpha1.Repository{}
+		repository := &githubv1alpha1.GitHubRepo{}
 
 		BeforeEach(func() {
-			By("creating the custom resource for the Kind Repository")
+			By("creating the custom resource for the Kind GitHubRepo")
 			err := k8sClient.Get(ctx, typeNamespacedName, repository)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &githubv1alpha1.Repository{
+				resource := &githubv1alpha1.GitHubRepo{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,11 +59,11 @@ var _ = Describe("Repository Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &githubv1alpha1.Repository{}
+			resource := &githubv1alpha1.GitHubRepo{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 
-			By("Cleanup the specific resource instance Repository")
+			By("Cleanup the specific resource instance GitHubRepo")
 			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
 		})
 		It("should successfully reconcile the resource", func() {

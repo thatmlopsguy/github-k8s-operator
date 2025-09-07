@@ -1,9 +1,12 @@
-apiVersion: github.github.com/v1alpha1
-kind: Repository
+apiVersion: github.thatmlopsguy.com/v1alpha1
+kind: GitHubRepo
 metadata:
   labels:
     app.kubernetes.io/name: github-operator
     app.kubernetes.io/managed-by: kustomize
-  name: repository-sample
+  name: test-public-repo
 spec:
-  # TODO(user): Add fields here
+  name: test-public-repo
+  description: "Testing public repository creation"
+  private: false
+  # owner: "your-github-username"  # Optional: specify owner, defaults to authenticated user

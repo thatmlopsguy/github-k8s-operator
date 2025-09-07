@@ -23,26 +23,48 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// RepositorySpec defines the desired state of Repository.
+// RepositorySpec defines the desired state of GitHubRepo.
 type RepositorySpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Repository. Edit repository_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Name is the name of the GitHub repository
+	Name string `json:"name"`
+
+	// Description is the description of the GitHub repository
+	Description string `json:"description,omitempty"`
+
+	// Private indicates whether the repository should be private or public
+	Private bool `json:"private,omitempty"`
+
+	// Owner is the GitHub user or organization that will own the repository
+	// If not specified, the repository will be created under the authenticated user
+	Owner string `json:"owner,omitempty"`
 }
 
-// RepositoryStatus defines the observed state of Repository.
+// RepositoryStatus defines the observed state of GitHubRepo.
 type RepositoryStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Ready indicates if the repository has been successfully created
+	Ready bool `json:"ready,omitempty"`
+
+	// URL is the GitHub repository URL
+	URL string `json:"url,omitempty"`
+
+	// Message provides additional information about the repository status
+	Message string `json:"message,omitempty"`
+
+	// GitHubID is the GitHub repository ID
+	GitHubID int64 `json:"githubId,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
-// Repository is the Schema for the repositories API.
-type Repository struct {
+// GitHubRepo is the Schema for the repositories API.
+type GitHubRepo struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
@@ -52,13 +74,13 @@ type Repository struct {
 
 // +kubebuilder:object:root=true
 
-// RepositoryList contains a list of Repository.
-type RepositoryList struct {
+// GitHubRepoList contains a list of GitHubRepo.
+type GitHubRepoList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Repository `json:"items"`
+	Items           []GitHubRepo `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&Repository{}, &RepositoryList{})
+	SchemeBuilder.Register(&GitHubRepo{}, &GitHubRepoList{})
 }
