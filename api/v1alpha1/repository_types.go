@@ -40,6 +40,9 @@ type RepositorySpec struct {
 	// Gitignore is the name of the .gitignore template to use for the repository
 	Gitignore string `json:"gitignore,omitempty"`
 
+	// License is the name of the license template to use for the repository
+	License string `json:"license,omitempty"`
+
 	// Owner is the GitHub user or organization that will own the repository
 	// If not specified, the repository will be created under the authenticated user
 	Owner string `json:"owner,omitempty"`

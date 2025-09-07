@@ -100,9 +100,21 @@ func (r *RepositoryReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 
 	if existingRepo != nil {
-		// Repository exists, update status
+		// Repository exists, check if updates are needed
 		log.Info("Repository already exists on GitHub", "url", existingRepo.GetHTMLURL())
-		return r.updateStatus(ctx, &gitHubRepo, true, existingRepo.GetHTMLURL(), "Repository exists", existingRepo.GetID())
+		
+		updated, err := r.updateGitHubRepository(ctx, githubClient, &gitHubRepo, existingRepo)
+		if err != nil {
+			log.Error(err, "Failed to update repository")
+			return r.updateStatus(ctx, &gitHubRepo, false, "", fmt.Sprintf("Failed to update repository: %v", err), 0)
+		}
+		
+		if updated {
+			log.Info("Successfully updated GitHub repository", "url", existingRepo.GetHTMLURL())
+			return r.updateStatus(ctx, &gitHubRepo, true, existingRepo.GetHTMLURL(), "Repository updated successfully", existingRepo.GetID())
+		} else {
+			return r.updateStatus(ctx, &gitHubRepo, true, existingRepo.GetHTMLURL(), "Repository exists", existingRepo.GetID())
+		}
 	}
 
 	// Create new repository
@@ -182,8 +194,14 @@ func (r *RepositoryReconciler) createGitHubRepository(ctx context.Context, clien
 		log.Info("Setting gitignore template", "template", gitHubRepo.Spec.Gitignore)
 	}
 
+	// Set license template if specified
+	if gitHubRepo.Spec.License != "" {
+		repo.LicenseTemplate = github.String(gitHubRepo.Spec.License)
+		log.Info("Setting license template", "template", gitHubRepo.Spec.License)
+	}
+
 	owner := gitHubRepo.Spec.Owner
-	log.Info("Creating repository with parameters", "name", gitHubRepo.Spec.Name, "private", gitHubRepo.Spec.Private, "gitignore", gitHubRepo.Spec.Gitignore)
+	log.Info("Creating repository with parameters", "name", gitHubRepo.Spec.Name, "private", gitHubRepo.Spec.Private, "gitignore", gitHubRepo.Spec.Gitignore, "license", gitHubRepo.Spec.License)
 	
 	createdRepo, _, err := client.Repositories.Create(ctx, owner, repo)
 	if err != nil {
@@ -232,6 +250,78 @@ func (r *RepositoryReconciler) handleDeletion(ctx context.Context, client *githu
 	}
 
 	return ctrl.Result{}, nil
+}
+
+// updateGitHubRepository checks for differences and updates the repository if needed
+func (r *RepositoryReconciler) updateGitHubRepository(ctx context.Context, client *github.Client, gitHubRepo *githubv1alpha1.GitHubRepo, existingRepo *github.Repository) (bool, error) {
+	log := logf.FromContext(ctx)
+	updated := false
+
+	// Check if visibility needs to be updated
+	desiredPrivate := gitHubRepo.Spec.Private
+	currentPrivate := existingRepo.GetPrivate()
+
+	if desiredPrivate != currentPrivate {
+		log.Info("Repository visibility needs update", "current", currentPrivate, "desired", desiredPrivate)
+		
+		// Prepare update request
+		repoUpdate := &github.Repository{
+			Private: &desiredPrivate,
+		}
+
+		// Get owner
+		owner := gitHubRepo.Spec.Owner
+		if owner == "" {
+			user, _, err := client.Users.Get(ctx, "")
+			if err != nil {
+				return false, fmt.Errorf("failed to get authenticated user: %w", err)
+			}
+			owner = user.GetLogin()
+		}
+
+		// Update repository visibility
+		_, _, err := client.Repositories.Edit(ctx, owner, gitHubRepo.Spec.Name, repoUpdate)
+		if err != nil {
+			return false, fmt.Errorf("failed to update repository visibility: %w", err)
+		}
+
+		log.Info("Successfully updated repository visibility", "private", desiredPrivate)
+		updated = true
+	}
+
+	// Check if description needs to be updated
+	desiredDescription := gitHubRepo.Spec.Description
+	currentDescription := existingRepo.GetDescription()
+
+	if desiredDescription != currentDescription && desiredDescription != "" {
+		log.Info("Repository description needs update", "current", currentDescription, "desired", desiredDescription)
+		
+		// Prepare update request
+		repoUpdate := &github.Repository{
+			Description: &desiredDescription,
+		}
+
+		// Get owner
+		owner := gitHubRepo.Spec.Owner
+		if owner == "" {
+			user, _, err := client.Users.Get(ctx, "")
+			if err != nil {
+				return false, fmt.Errorf("failed to get authenticated user: %w", err)
+			}
+			owner = user.GetLogin()
+		}
+
+		// Update repository description
+		_, _, err := client.Repositories.Edit(ctx, owner, gitHubRepo.Spec.Name, repoUpdate)
+		if err != nil {
+			return false, fmt.Errorf("failed to update repository description: %w", err)
+		}
+
+		log.Info("Successfully updated repository description")
+		updated = true
+	}
+
+	return updated, nil
 }
 
 // updateStatus updates the status of the GitHubRepo resource
