@@ -200,7 +200,8 @@ echo -n "your_token" | base64
 
 **Cause**: When `owner` is specified, GitHub API treats it as an organization
 
-**Solution**: 
+**Solution**:
+
 - For personal repositories: omit the `owner` field (defaults to authenticated user)
 - For organization repositories: ensure the authenticated user has permissions in that organization
 
@@ -209,14 +210,18 @@ echo -n "your_token" | base64
 **Problem**: Controller pods not starting or crashlooping
 
 **Solutions**:
+
 1. Check RBAC permissions:
+
    ```bash
    kubectl get clusterrole github-operator-manager-role -o yaml
    ```
+
 2. Verify secret exists and is readable:
    ```bash
    kubectl get secret github-token -o yaml
    ```
+
 3. Check controller logs:
    ```bash
    kubectl logs -n github-operator-system deployment/github-operator-controller-manager
@@ -227,6 +232,7 @@ echo -n "your_token" | base64
 **Problem**: Repository creation fails with API errors
 
 **Common Causes and Solutions**:
+
 - **Token permissions**: Ensure token has `repo` and `public_repo` scopes
 - **Repository exists**: Controller will detect and update status accordingly
 - **Rate limiting**: GitHub API rate limits apply (check logs for rate limit errors)
@@ -256,12 +262,14 @@ kubectl annotate githubrepo your-repo-name reconcile-trigger=$(date +%s)
 ### Log Messages to Look For
 
 **Successful Operations**:
+
 - `"Creating new GitHub repository"`
 - `"Successfully created GitHub repository"`
 - `"Repository already exists on GitHub"`
 - `"Successfully deleted repository from GitHub"`
 
 **Error Conditions**:
+
 - `"Failed to get GitHub token secret"`
 - `"Failed to create repository"`
 - `"Failed to check repository"`
