@@ -1,0 +1,11 @@
+apiVersion: github.thatmlopsguy.com/v1alpha1
+kind: GitHubRepo
+metadata:
+  name: test-private-repo
+  namespace: default
+spec:
+  name: test-private-repo
+  description: "Testing private repository creation with the GitHub operator"
+  gitignore: Go
+  license: mit
+  private: true

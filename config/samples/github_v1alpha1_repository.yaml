@@ -1,0 +1,14 @@
+apiVersion: github.thatmlopsguy.com/v1alpha1
+kind: GitHubRepo
+metadata:
+  labels:
+    app.kubernetes.io/name: github-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: test-public-repo
+spec:
+  name: test-public-repo
+  description: "Testing public repository creation"
+  gitignore: Go  # Optional: specify gitignore template (e.g., Go, Python, Node, etc.)
+  license: mit   # Optional: specify license template (e.g., mit, apache-2.0, gpl-3.0, etc.)
+  private: false
+  # owner: "your-github-username"  # Optional: specify owner, defaults to authenticated user
