@@ -42,6 +42,10 @@ spec:
               description:
                 description: Description is the description of the GitHub repository
                 type: string
+              gitignore:
+                description: Gitignore is the name of the .gitignore template to use
+                  for the repository
+                type: string
               name:
                 description: Name is the name of the GitHub repository
                 type: string

@@ -37,6 +37,9 @@ type RepositorySpec struct {
 	// Private indicates whether the repository should be private or public
 	Private bool `json:"private,omitempty"`
 
+	// Gitignore is the name of the .gitignore template to use for the repository
+	Gitignore string `json:"gitignore,omitempty"`
+
 	// Owner is the GitHub user or organization that will own the repository
 	// If not specified, the repository will be created under the authenticated user
 	Owner string `json:"owner,omitempty"`

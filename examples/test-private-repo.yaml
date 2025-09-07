@@ -6,4 +6,5 @@ metadata:
 spec:
   name: test-private-repo
   description: "Testing private repository creation with the GitHub operator"
+  gitignore: Go
   private: true

@@ -168,13 +168,23 @@ func (r *RepositoryReconciler) getGitHubRepository(ctx context.Context, client *
 
 // createGitHubRepository creates a new repository on GitHub
 func (r *RepositoryReconciler) createGitHubRepository(ctx context.Context, client *github.Client, gitHubRepo *githubv1alpha1.GitHubRepo) (*github.Repository, error) {
+	log := logf.FromContext(ctx)
+	
 	repo := &github.Repository{
 		Name:        github.String(gitHubRepo.Spec.Name),
 		Description: github.String(gitHubRepo.Spec.Description),
 		Private:     github.Bool(gitHubRepo.Spec.Private),
 	}
 
+	// Set gitignore template if specified
+	if gitHubRepo.Spec.Gitignore != "" {
+		repo.GitignoreTemplate = github.String(gitHubRepo.Spec.Gitignore)
+		log.Info("Setting gitignore template", "template", gitHubRepo.Spec.Gitignore)
+	}
+
 	owner := gitHubRepo.Spec.Owner
+	log.Info("Creating repository with parameters", "name", gitHubRepo.Spec.Name, "private", gitHubRepo.Spec.Private, "gitignore", gitHubRepo.Spec.Gitignore)
+	
 	createdRepo, _, err := client.Repositories.Create(ctx, owner, repo)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create repository: %w", err)

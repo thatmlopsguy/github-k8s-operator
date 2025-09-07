@@ -8,5 +8,6 @@ metadata:
 spec:
   name: test-public-repo
   description: "Testing public repository creation"
+  gitignore: Go  # Optional: specify gitignore template (e.g., Go, Python, Node, etc.)
   private: false
   # owner: "your-github-username"  # Optional: specify owner, defaults to authenticated user
